@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Image Uploader</title>
+</head>
+<body>
+  <input type="file" id="fileInput" accept="image/*">
+  <button id="uploadButton">Upload Image</button>
+  <div id="imagePreview"></div>
+  <div id="shareLink"></div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const uploadButton = document.getElementById('uploadButton');
+    const imagePreview = document.getElementById('imagePreview');
+    const shareLink = document.getElementById('shareLink');
+
+    uploadButton.addEventListener('click', uploadImage);
+
+    function uploadImage() {
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append('image', file);
+
+      fetch('/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        const id = data.id;
+        const imageUrl = data.imageUrl;
+        const shareLinkHtml = `<a href="${imageUrl}" target="_blank">Share: ${imageUrl}</a>`;
+        shareLink.innerHTML = shareLinkHtml;
+      })
+      .catch(error => console.error('Error uploading image:', error));
+    }
+  </script>
+</body>
+</html>
